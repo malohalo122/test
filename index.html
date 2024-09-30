@@ -32,7 +32,7 @@
   </style>
 
   <script>
-    // Function to detect device information
+    // Function to detect the device and platform
     function getDeviceInfo() {
       let deviceInfo = {};
       let userAgent = navigator.userAgent || navigator.vendor || window.opera;
@@ -76,17 +76,22 @@
       return deviceInfo;
     }
 
-    // Function to display the device info
-    function displayDeviceInfo() {
-      const info = getDeviceInfo();
-      document.getElementById('device').innerText = info.device;
-      document.getElementById('detail').innerText = info.detail;
-      document.getElementById('platform').innerText = info.platform;
-      document.getElementById('userAgent').innerText = info.userAgent;
+    // Function to send device info to Google Sheets
+    function sendDeviceInfo() {
+      const deviceInfo = getDeviceInfo();
+
+      fetch('https://script.google.com/macros/s/AKfycbzLjMKrrCT14hcZ4fcvwJm9stU_ZOzPnSmw-60-i57RMH6l4OM-oY7GiNwXl2Mtvm-o/exec', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(deviceInfo)
+      })
+      .then(response => response.json())
+      .then(data => console.log('Data sent successfully:', data))
+      .catch(error => console.error('Error sending data:', error));
     }
 
-    // Execute the function when the page loads
-    window.onload = displayDeviceInfo;
+    // Run the function to collect info when the page loads
+    window.onload = sendDeviceInfo;
   </script>
 </head>
 <body>
