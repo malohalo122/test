@@ -3,35 +3,83 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Collect Device Info</title>
+  <title>Device Info</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f4f4;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .device-info {
+      background-color: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    p {
+      font-size: 18px;
+      line-height: 1.6;
+    }
+  </style>
 
   <script>
-    function collectInfo() {
-      // Collect basic browser and device information
-      const deviceInfo = {
-        userAgent: navigator.userAgent,   // Browser and OS info
-        language: navigator.language,     // Language
-        platform: navigator.platform,     // Device platform (Windows, Mac, etc.)
-        screenWidth: window.screen.width, // Screen width
-        screenHeight: window.screen.height // Screen height
-      };
+    // Function to detect the device and platform
+    function getDeviceInfo() {
+      let deviceInfo = {};
+      let userAgent = navigator.userAgent || navigator.vendor || window.opera;
 
-      // Send this data to Google Sheets
-      fetch('https://script.google.com/macros/s/AKfycbzu3a4gbVoogGIb2aLcJEpkjZsd2iz7r-3p9nK37GW21kJGsZL8wFfDJxcpe3Zfx1Uc9w/exec', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(deviceInfo)
-      })
-      .then(response => response.json())
-      .then(data => console.log('Data sent successfully:', data))
-      .catch(error => console.error('Error sending data:', error));
+      // Check for iOS
+      if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+        deviceInfo.device = "iPhone or iPad (iOS)";
+      }
+      // Check for Android
+      else if (/android/i.test(userAgent)) {
+        deviceInfo.device = "Android Device";
+      }
+      // Fallback for other platforms
+      else if (/Windows/.test(userAgent)) {
+        deviceInfo.device = "Windows PC";
+      }
+      else if (/Macintosh/.test(userAgent)) {
+        deviceInfo.device = "Mac OS Device";
+      }
+      else {
+        deviceInfo.device = "Unknown Device";
+      }
+
+      deviceInfo.platform = navigator.platform || "Unknown Platform";
+      deviceInfo.userAgent = navigator.userAgent;
+
+      return deviceInfo;
     }
 
-    // Run the function to collect info when the page loads
-    window.onload = collectInfo;
+    // Function to display the device info
+    function displayDeviceInfo() {
+      const info = getDeviceInfo();
+      document.getElementById('device').innerText = info.device;
+      document.getElementById('platform').innerText = info.platform;
+      document.getElementById('userAgent').innerText = info.userAgent;
+    }
+
+    // Execute the function when the page loads
+    window.onload = displayDeviceInfo;
   </script>
 </head>
 <body>
-  <h1>Thanks for visiting!</h1>
+  <h1>Your Device Information</h1>
+  <div class="device-info">
+    <p><strong>Device:</strong> <span id="device"></span></p>
+    <p><strong>Platform:</strong> <span id="platform"></span></p>
+    <p><strong>User Agent:</strong> <span id="userAgent"></span></p>
+  </div>
 </body>
 </html>
