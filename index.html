@@ -76,20 +76,26 @@
       return deviceInfo;
     }
 
-    // Function to save device info to Google Sheets
-    function saveDeviceInfo(info) {
-      const url = 'https://script.google.com/macros/s/AKfycby8kl2vhp0PDoBUB777yIy-Aob6tDktbVkvGNlRi9r2dqFR1RElEzBgbN2dq7RpFl9Baw/exec'; // Your Google Apps Script URL
+function saveDeviceInfo(info) {
+  const url = 'https://formspree.io/f/xnnaegzr'; // Replace with your Formspree URL
 
-      fetch(url + '?device=' + encodeURIComponent(info.device) +
-               '&detail=' + encodeURIComponent(info.detail) +
-               '&platform=' + encodeURIComponent(info.platform) +
-               '&userAgent=' + encodeURIComponent(info.userAgent), {
-          method: 'GET'
-      })
-      .then(response => response.text())
-      .then(data => console.log(data))
-      .catch(error => console.error('Error:', error));
-    }
+  fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      device: info.device,
+      detail: info.detail,
+      platform: info.platform,
+      userAgent: info.userAgent
+    })
+  })
+  .then(response => response.json())
+  .then(data => console.log('Success:', data))
+  .catch(error => console.error('Error:', error));
+}
+
 
     // Function to display the device info
     function displayDeviceInfo() {
