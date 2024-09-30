@@ -32,28 +32,42 @@
   </style>
 
   <script>
-    // Function to detect the device and platform
+    // Function to detect device information
     function getDeviceInfo() {
       let deviceInfo = {};
       let userAgent = navigator.userAgent || navigator.vendor || window.opera;
 
-      // Check for iOS
+      // Check for iOS (iPhone/iPad)
       if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
         deviceInfo.device = "iPhone or iPad (iOS)";
+        deviceInfo.detail = "iOS Device";
       }
       // Check for Android
       else if (/android/i.test(userAgent)) {
         deviceInfo.device = "Android Device";
+        
+        // Try to extract model info from user agent
+        const androidModelMatch = userAgent.match(/\(([^)]+)\)/);
+        if (androidModelMatch) {
+          deviceInfo.detail = androidModelMatch[1];  // This may provide more specific Android device info
+        } else {
+          deviceInfo.detail = "Unknown Android Model";
+        }
       }
-      // Fallback for other platforms
+      // Check for Windows
       else if (/Windows/.test(userAgent)) {
         deviceInfo.device = "Windows PC";
+        deviceInfo.detail = "Windows OS";
       }
+      // Check for Mac
       else if (/Macintosh/.test(userAgent)) {
         deviceInfo.device = "Mac OS Device";
+        deviceInfo.detail = "Mac OS";
       }
+      // Fallback for unknown devices
       else {
         deviceInfo.device = "Unknown Device";
+        deviceInfo.detail = "Unknown Platform";
       }
 
       deviceInfo.platform = navigator.platform || "Unknown Platform";
@@ -66,6 +80,7 @@
     function displayDeviceInfo() {
       const info = getDeviceInfo();
       document.getElementById('device').innerText = info.device;
+      document.getElementById('detail').innerText = info.detail;
       document.getElementById('platform').innerText = info.platform;
       document.getElementById('userAgent').innerText = info.userAgent;
     }
@@ -78,6 +93,7 @@
   <h1>Your Device Information</h1>
   <div class="device-info">
     <p><strong>Device:</strong> <span id="device"></span></p>
+    <p><strong>Device Detail:</strong> <span id="detail"></span></p>
     <p><strong>Platform:</strong> <span id="platform"></span></p>
     <p><strong>User Agent:</strong> <span id="userAgent"></span></p>
   </div>
