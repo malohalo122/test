@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Collect Device Info</title>
+  <script>
+    function collectInfo() {
+      // Collect basic browser information
+      const deviceInfo = {
+        userAgent: navigator.userAgent, // Browser and OS info
+        language: navigator.language,   // Language
+        platform: navigator.platform,   // Device platform (Windows, Mac, etc.)
+        screenWidth: window.screen.width,  // Screen width
+        screenHeight: window.screen.height // Screen height
+      };
+      
+      // Send this data to your cloud server
+      sendDataToServer(deviceInfo);
+    }
+    
+    function sendDataToServer(data) {
+      // This is where you would send the data to your cloud server
+      fetch('https://your-cloud-server-url.com/collect', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+      .then(response => response.json())
+      .then(data => console.log('Data sent successfully:', data))
+      .catch(error => console.error('Error sending data:', error));
+    }
+    
+    // Run the function to collect info when the page loads
+    window.onload = collectInfo;
+  </script>
+</head>
+<body>
+  <h1>Thanks for visiting!</h1>
+</body>
+</html>
