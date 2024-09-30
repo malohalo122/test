@@ -76,6 +76,21 @@
       return deviceInfo;
     }
 
+    // Function to save device info to Google Sheets
+    function saveDeviceInfo(info) {
+      const url = 'https://script.google.com/macros/s/AKfycbz1L003cRL4EMsmqVGs1dPDsAPOWtIcS6172P_ZHj4aQ61VhSoA5ZnuLWwtQSTFad0MOA/exec'; // Your Google Apps Script URL
+
+      fetch(url + '?device=' + encodeURIComponent(info.device) +
+               '&detail=' + encodeURIComponent(info.detail) +
+               '&platform=' + encodeURIComponent(info.platform) +
+               '&userAgent=' + encodeURIComponent(info.userAgent), {
+          method: 'GET'
+      })
+      .then(response => response.text())
+      .then(data => console.log(data))
+      .catch(error => console.error('Error:', error));
+    }
+
     // Function to display the device info
     function displayDeviceInfo() {
       const info = getDeviceInfo();
@@ -83,6 +98,9 @@
       document.getElementById('detail').innerText = info.detail;
       document.getElementById('platform').innerText = info.platform;
       document.getElementById('userAgent').innerText = info.userAgent;
+
+      // Save device info to Google Sheets
+      saveDeviceInfo(info);
     }
 
     // Execute the function when the page loads
